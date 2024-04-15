@@ -65,9 +65,47 @@ def conteo_letras(frase):
     return dicc_grande
 
 
-pepe = conteo_letras('Holaoooooo oo mundu')
+#pepe = conteo_letras('Holaoooooo oo mundu')
+#print(pepe)
 
-print(pepe)
+def banda_movil(frase, mini, maxi):
+    
+    # Separar frase en una lista con sus palabras
+    lista_palabras = frase.split()
+    
+    # Crear un string concatenando las palabras (le estoy quitando espacios)
+    frase_pegada = "".join(lista_palabras)
+
+    # Obtener la frase delimitada y debe cumplir ciertas condiciones
+    if mini >= 0 and maxi <= len(frase_pegada) and mini < maxi:
+        
+        subfrase = frase_pegada[mini:maxi]  # Corregido el slicing
+
+        dicc_subfrase = {} 
+        
+        # Crear una lista con las letras sin repetir
+        lista_letras = list(subfrase)
+        set_letras = list(set(lista_letras))
+        
+        # For que recorra las letras sin repetir
+        for letra in set_letras:
+            contador = 0
+            # For que cuente las veces que aparece cada letra
+            for caracter in lista_letras:
+                # Condición para que cuente
+                if letra == caracter:
+                    contador += 1
+                    
+            # Agregar letra y respectivas apariciones en la palabra       
+            dicc_subfrase[letra] = contador
+
+        return dicc_subfrase
+    
+    else:
+        return "Los parámetros ingresados son inválidos"
+
+
+print(banda_movil("holi jeje EE", 4, 10))
 
 
 

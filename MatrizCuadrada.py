@@ -4,6 +4,10 @@ Created on Mon Apr 15 09:42:18 2024
 
 @author: AMADOR
 """
+
+import numpy as np
+import copy
+
 class MatrizNxm():
     
     #el constructor exige un nombre para la matriz como "A" y la matriz es 
@@ -85,7 +89,7 @@ class MatrizCuadrada(MatrizNxm):
         if not isinstance(anxn, MatrizCuadrada) or not isinstance(bnxn, MatrizCuadrada):
             raise TypeError("El argumento debe ser un objeto de la clase MiClase")
         
-        #inicializarla lista vacía
+        #crear una matriz compia de anxn para tener molde para la matriz suma
         c = []
         
         # Inicializar la nueva matriz con ceros
@@ -161,9 +165,65 @@ class MatrizCuadrada(MatrizNxm):
         #retornar error si el factor ingresado no es válido    
         else:
             raise TypeError("El factor debe ser un escalar o un vector de fila cuerente")
-            
-           
     
+            
+    
+    
+    #Tiene como parámetro un objeto matriz cuadrada
+    def inversa(anxn):
+        #extraer la matriz del objeto
+        matriz = anxn.get_matriz()
+        
+        #Calcula la inversa de la matriz con librería de numpy
+        try:
+            inv = np.linalg.inv(matriz)
+            
+            #Crear nuevo objeto matriz cuadrada que sea la inversa
+            cnxn = MatrizCuadrada(f"{anxn.get_nombre()}^-1", inv)
+            
+            return cnxn
+        
+        except np.linalg.LinAlgError:
+            print(f'La matriz {anxn.get_nombre()} no es invertible')
+        
+        
+        
+    def transpuesta(anxn):
+        #extraer la matriz del objeto
+        matriz = anxn.get_matriz()
+        
+        #crear copia de la matriz para tener el molde para transpuesta
+        trans = copy.deepcopy(matriz)
+        
+        
+        #Realizar la operacion con for anidados
+        for i in range(0,anxn.get_filas()):
+            for j in range(0,anxn.get_columnas()):
+                trans[i][j] = matriz[j][i]
+        
+        
+        #Crear un objeto "A^T cuadrada que es la transpuesta de A
+        transpuesta = MatrizCuadrada(f"{anxn.get_nombre()}^T", trans)
+        
+        return transpuesta
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
     
     
     

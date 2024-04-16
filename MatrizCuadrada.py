@@ -85,10 +85,19 @@ class MatrizCuadrada(MatrizNxm):
         if not isinstance(anxn, MatrizCuadrada) or not isinstance(bnxn, MatrizCuadrada):
             raise TypeError("El argumento debe ser un objeto de la clase MiClase")
         
-        #Crear una matriz "A+B" que es la suma pero va a ser la matriz c
-        cnxn = anxn
-        cnxn.set_nombre("A+B")
+        #inicializarla lista vacía
+        c = []
         
+        # Inicializar la nueva matriz con ceros
+        for i in range(0,anxn.get_filas()):
+            fila = []
+            for j in range(0,anxn.get_columnas()):
+                fila.append(0)
+            c.append(fila)
+        
+        #Crear un objeto "A+B cuadrada que es la suma pero con la matriz c
+        cnxn = MatrizCuadrada(f"{anxn.get_nombre()}+{bnxn.get_nombre()}", c)
+    
         # for anidado para que acceda a cada entradas de la matriz y sume
         for i in range(0,anxn.get_filas()):
             for j in range(0,anxn.get_columnas()):
@@ -100,11 +109,60 @@ class MatrizCuadrada(MatrizNxm):
         
         return cnxn
             
-    
+    def funcion_multiplicacion(dnxn, factor):
+        
+        #Verificar que dnxn sea un objeto matirz cuadrada
+        if not isinstance(dnxn, MatrizCuadrada):
+            raise TypeError("El argumento debe ser un objeto de la clase MatrizCuadrada")
    
+        #Caso 1: factor es un escalar (int):
+        if isinstance(factor, int):
+            #Crear una matriz "factor * A" que es la suma pero va a ser la matriz c
+            cnxn = dnxn
+            nombre = dnxn.get_nombre()
+            cnxn.set_nombre(f"{factor}*" + nombre)
+            
+            # for anidado para que acceda a cada entradas y multiplique
+            for i in range(0,dnxn.get_filas()):
+                for j in range(0,dnxn.get_columnas()):
+                    #sumar entradas
+                    valor = dnxn.get_matriz()[i][j] * factor 
+                    
+                    #cambiar valor de la entrada por la suma en la matriz "A+B"
+                    cnxn.set_entrada_matriz(i, j, valor) 
     
+            return cnxn
+        
+        #Caso 2: factor es un vector (o lista, ya que en py no hay vectores)
+        elif isinstance(factor, list):
+            #verificar que el vector fila sea adecuado
+            if dnxn.get_filas() == len(factor):
+                #Crear lista para crear el vector que se retorna
+                vector_return = []
+                
+                # Crear 2 for anidados para acceder a las entradas de la matriz
+                for j in range(0, dnxn.get_columnas()): #recorre columnas
+                    #iniciar valor que suma los productos
+                    valor = 0
+                    for i in range(0, dnxn.get_filas()):
+                        valor += dnxn.get_matriz()[i][j] * factor[j]
     
+                    #agregar elemento a lista return
+                    vector_return.append(valor)
     
+                #Crear objeto tipo matriz nxm
+                cnxm = MatrizNxm(f'{factor}*{dnxn.get_nombre()}', [vector_return],)
+                
+                return cnxm
+            # retornar error si el vector no sirve
+            else:
+                raise TypeError("El vector debe tener igual catidad de columnas como filas de la matriz")
+        
+        #retornar error si el factor ingresado no es válido    
+        else:
+            raise TypeError("El factor debe ser un escalar o un vector de fila cuerente")
+            
+           
     
     
     

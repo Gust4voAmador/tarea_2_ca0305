@@ -208,12 +208,31 @@ class MatrizCuadrada(MatrizNxm):
         return transpuesta
         
         
+    def valores_propios(anxn):
+        
+        #obtener matriz 
+        matri = anxn.get_matriz()
+        
+        # Definir la matriz segun np para usar la librería
+        matriz = np.array(matri)
+        
+        # Calcular los valores propios
+        vp = np.linalg.eigvals(matriz)
+               
+        return vp
         
         
+    def vectores_propios(anxn):
+        #obtener matriz 
+        matriz = anxn.get_matriz()
         
+        # Calcular vectores propios
+        valores_propios, vectores_propios = np.linalg.eig(matriz)
         
+        # Devolver los vectores propios
+        return vectores_propios    
         
-        
+    
         
         
         

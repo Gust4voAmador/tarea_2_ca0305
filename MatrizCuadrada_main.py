@@ -4,6 +4,8 @@ Created on Mon Apr 15 10:27:37 2024
 
 @author: AMADOR
 """
+
+import numpy as np
 from MatrizCuadrada import MatrizNxm,MatrizCuadrada
 
 ma = [[1,1], [1,1]]
@@ -25,6 +27,7 @@ c = MatrizCuadrada("C", mc)
 d = MatrizCuadrada("D", md)
 
 factor = [2,2]
+print(np.array(factor).shape)
 
 #print(len(factor[0]))
 print(isinstance(factor, list))
@@ -36,7 +39,7 @@ print(MatrizCuadrada.funcion_suma(a, b))
 
 print(a.get_matriz())
 
-print(MatrizCuadrada.funcion_multiplicacion(a, factor))
+print(MatrizCuadrada.funcion_multiplicacion(d, d))
 
 #print(MatrizCuadrada.inversa(a))
 

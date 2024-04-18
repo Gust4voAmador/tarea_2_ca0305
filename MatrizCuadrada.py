@@ -129,8 +129,34 @@ class MatrizCuadrada(MatrizNxm):
                 cnxn.set_entrada_matriz(i, j, valor) 
         
         return cnxn
+    
+    #funcion que toma un array de NumPy y devuelve una matriz
+    def array_a_vector(array, num_columnas):
+        lista_de_listas = []
+        fila_actual = []
+    
+        for elemento in array:
+            fila_actual.append(elemento)
+            if len(fila_actual) == num_columnas:
+                lista_de_listas.append(fila_actual)
+                fila_actual = []
+    
+        if fila_actual:
+            raise ValueError("El tamaño del array no es compatible con el número de columnas proporcionado.")
+    
+        return lista_de_listas
+    
+    def array_a_matriz(array, num_columnas):
+        return [fila.tolist() for fila in array]
+    
+    
+    
+    
             
     def funcion_multiplicacion(obj_matriz_nxn, factor):
+        # Verificar que obj_matriz_nxn sea un objeto matriz cuadrada
+        if not isinstance(obj_matriz_nxn, MatrizCuadrada):
+            raise TypeError("El primer parámetro debe ser un objeto de la clase MatrizCuadrada")
         
         # Caso 1: si el factor es una matriz o un vector (lista de listas o lista simple)
         if isinstance(factor, list):
@@ -150,31 +176,41 @@ class MatrizCuadrada(MatrizNxm):
                 
                 # Crear objeto MatrizNxm con la matriz producto para retornarlo
                 # tolist() es para convertir el array a matriz otra vez
-                obj_matriz_producto = MatrizNxm("Producto", matriz_producto.tolist())
+                obj_matriz_producto = MatrizNxm("Matriz producto", MatrizCuadrada.array_a_matriz(matriz_producto, obj_matriz_nxn.get_columnas()))
                 
                 return obj_matriz_producto
+            
             else: 
                 # Si el factor es un vector (elementos son float)
                 # Verificar si la matriz y el vector son compatibles 
                 if obj_matriz_nxn.get_columnas() != len(factor):
                     raise TypeError("No se pueden multiplicar la matriz y el vector. El número de columnas de la matriz no coincide con el número de elementos del vector.")
-                
+                 
                 # Convertir la matriz y el vector a arrays de NumPy
                 matriz = np.array(obj_matriz_nxn.get_matriz())
                 vector = np.array(factor)
-                
-                
+                 
                 # Usar NumPy para hacer la multiplicacion
                 matriz_producto = np.dot(matriz, vector)
-                
+                 
                 # Crear objeto MatrizNxm con la matriz producto para retornarlo
                 # tolist() es para convertir el array a matriz otra vez
-                obj_matriz_producto = MatrizNxm("Producto", matriz_producto.tolist())
                 
-                return obj_matriz_producto
+                obj_matriz_producto = MatrizNxm("Matriz producto", MatrizCuadrada.array_a_vector(matriz_producto, obj_matriz_nxn.get_columnas()))
+                
+                 
+                return obj_matriz_producto 
+        
+        
+        
+        
+        
+                  
+       
+                
         
         #Caso 2: si el factor es una matriz objeto de la clase MatrizNxm o MatrizCaudrada
-        elif isinstance(factor, MatrizNxm) or isinstance(factor, MatrizCuadrada):
+        if isinstance(factor, MatrizNxm) or isinstance(factor, MatrizCuadrada):
             
             # Verificar si las matrices son son compatibles
             if obj_matriz_nxn.get_columnas() != factor.get_filas():

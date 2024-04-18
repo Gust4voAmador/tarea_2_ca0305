@@ -40,6 +40,13 @@ class MatrizNxm():
         self.__nombre = new_name
         return self.__nombre
     
+    def set_matriz(self, new_matriz):
+        if isinstance(new_matriz[0], list):
+            self.matriz = new_matriz
+            return self.matriz
+        else:
+            raise ValueError("El parámetro debe ser una matriz (lista de listas)")
+    
     def set_entrada_matriz(self, fila, columna, valor):
         # Verificar que fila y columna estén dentro de los límites de la matriz
         if fila < 0 or fila >= len(self.matriz):
@@ -80,6 +87,16 @@ class MatrizCuadrada(MatrizNxm):
         if self.get_filas() != self.get_columnas():
             raise ValueError("La matriz debe tener igual número de filas y columnas")
             
+    def set_matriz_cuadrada(self, new_matriz):
+        #Verificar que la nueva matriz satisfaga condiciones para se aceptable
+        if not isinstance(new_matriz[0], list): 
+            raise ValueError("El parámetro debe ser una matriz (lista de listas)")
+        elif len(new_matriz[0]) != len(new_matriz):
+            raise ValueError("La nueva matriz debe tener igual número de filas y columnas")   
+        else:        
+            self.matriz = new_matriz
+            return self.matriz
+            
 
     # Función static 
     def funcion_suma(anxn,bnxn):
@@ -113,64 +130,97 @@ class MatrizCuadrada(MatrizNxm):
         
         return cnxn
             
-    def funcion_multiplicacion(dnxn, factor):
+    def funcion_multiplicacion(obj_matriz_nxn, factor):
         
-        #Verificar que dnxn sea un objeto matirz cuadrada
-        if not isinstance(dnxn, MatrizCuadrada):
-            raise TypeError("El argumento debe ser un objeto de la clase MatrizCuadrada")
-   
-        #Caso 1: factor es un escalar (int):
-        if isinstance(factor, int):
-            #Crear una matriz "factor * A" que es la suma pero va a ser la matriz c
-            cnxn = dnxn
-            nombre = dnxn.get_nombre()
-            cnxn.set_nombre(f"{factor}*" + nombre)
+        # Caso 1: si el factor es una matriz o un vector (lista de listas o lista simple)
+        if isinstance(factor, list):
+            # Verificar si el factor es una matriz (lista de listas) o un vector (lista simple)
+            if isinstance(factor[0], list):
+                # Si el factor es una matriz
+                # Verificar si las matrices son compatibles
+                if obj_matriz_nxn.get_columnas() != len(factor[0]):
+                    raise TypeError("No se pueden multiplicar. El número de columnas de la primera matriz no coincide con el número de filas de la segunda matriz.")
+                
+                # Convertir la matriz y el vector a arrays de NumPy
+                matriz = np.array(obj_matriz_nxn.get_matriz())
+                matriz_2 = np.array(factor)
+                
+                # Usar NumPy para hacer la multiplicacion
+                matriz_producto = np.dot(matriz, matriz_2)
+                
+                # Crear objeto MatrizNxm con la matriz producto para retornarlo
+                # tolist() es para convertir el array a matriz otra vez
+                obj_matriz_producto = MatrizNxm("Producto", matriz_producto.tolist())
+                
+                return obj_matriz_producto
+            else: 
+                # Si el factor es un vector (elementos son float)
+                # Verificar si la matriz y el vector son compatibles 
+                if obj_matriz_nxn.get_columnas() != len(factor):
+                    raise TypeError("No se pueden multiplicar la matriz y el vector. El número de columnas de la matriz no coincide con el número de elementos del vector.")
+                
+                # Convertir la matriz y el vector a arrays de NumPy
+                matriz = np.array(obj_matriz_nxn.get_matriz())
+                vector = np.array(factor)
+                
+                
+                # Usar NumPy para hacer la multiplicacion
+                matriz_producto = np.dot(matriz, vector)
+                
+                # Crear objeto MatrizNxm con la matriz producto para retornarlo
+                # tolist() es para convertir el array a matriz otra vez
+                obj_matriz_producto = MatrizNxm("Producto", matriz_producto.tolist())
+                
+                return obj_matriz_producto
+        
+        #Caso 2: si el factor es una matriz objeto de la clase MatrizNxm o MatrizCaudrada
+        elif isinstance(factor, MatrizNxm) or isinstance(factor, MatrizCuadrada):
             
-            # for anidado para que acceda a cada entradas y multiplique
-            for i in range(0,dnxn.get_filas()):
-                for j in range(0,dnxn.get_columnas()):
-                    #sumar entradas
-                    valor = dnxn.get_matriz()[i][j] * factor 
-                    
-                    #cambiar valor de la entrada por la suma en la matriz "A+B"
-                    cnxn.set_entrada_matriz(i, j, valor) 
-    
-            return cnxn
+            # Verificar si las matrices son son compatibles
+            if obj_matriz_nxn.get_columnas() != factor.get_filas():
+                raise TypeError("No se pueden multiplicar. El número de columnas de la primera matriz no coincide con el numero de filas de la segunda matriz")
+            
+            # Convertir las matrices a arrays de NumPy
+            matriz_1 = np.array(obj_matriz_nxn.get_matriz())
+            matriz_2 = np.array(factor.get_matriz())
+            
+            #Usar NumPy para hacer la multiplicacion
+            matriz_producto = np.dot(matriz_1, matriz_2)
         
-        #Caso 2: factor es un vector (o lista, ya que en py no hay vectores)
-        elif isinstance(factor, list):
-            #verificar que el vector fila sea adecuado
-            if dnxn.get_filas() == len(factor):
-                #Crear lista para crear el vector que se retorna
-                vector_return = []
-                
-                # Crear 2 for anidados para acceder a las entradas de la matriz
-                for j in range(0, dnxn.get_columnas()): #recorre columnas
-                    #iniciar valor que suma los productos
-                    valor = 0
-                    for i in range(0, dnxn.get_filas()):
-                        valor += dnxn.get_matriz()[i][j] * factor[j]
-    
-                    #agregar elemento a lista return
-                    vector_return.append(valor)
-    
-                #Crear objeto tipo matriz nxm
-                cnxm = MatrizNxm(f'{factor}*{dnxn.get_nombre()}', [vector_return],)
-                
-                return cnxm
-            # retornar error si el vector no sirve
-            else:
-                raise TypeError("El vector debe tener igual catidad de columnas como filas de la matriz")
+            #Crear objeto MatrizNxm con la matriz producto para retornarlo
+            #tolist() es para convertir el array a matriz otra vez
+            obj_matriz_producto = MatrizNxm("Producto", matriz_producto.tolist())
+            
+            return obj_matriz_producto
+        
+        
+        #Caso 3: si el factor es un escalar   
+        elif isinstance(factor, float) or isinstance(factor, int) :
+            
+            # Convertir la matriz a arrays de NumPy
+            matriz = np.array(obj_matriz_nxn.get_matriz())
+        
+            #Multiplicar escalar con la matriz
+            matriz_producto = matriz * factor
+        
+            #Crear objeto MatrizNxm con la matriz producto para retornarlo
+            #tolist() es para convertir el array a matriz otra vez
+            obj_matriz_producto = MatrizNxm("Producto", matriz_producto.tolist())
+            
+            return obj_matriz_producto
+
         
         #retornar error si el factor ingresado no es válido    
         else:
-            raise TypeError("El factor debe ser un escalar o un vector de fila cuerente")
-    
+            raise TypeError("El factor es inválito, solo admite objetos del tipo MatrizNxm, MatrizCuadrada, matriz (lista de listas), vector (lista) y escalares (int o float)") 
             
-    
-    
+
     #Tiene como parámetro un objeto matriz cuadrada
     def inversa(anxn):
+        #Verificar que anxn sea un objeto matirz cuadrada
+        if not isinstance(anxn, MatrizCuadrada):
+            raise TypeError("El parámetro debe ser un objeto de la clase MatrizCuadrada")
+        
         #extraer la matriz del objeto
         matriz = anxn.get_matriz()
         
@@ -179,7 +229,7 @@ class MatrizCuadrada(MatrizNxm):
             inv = np.linalg.inv(matriz)
             
             #Crear nuevo objeto matriz cuadrada que sea la inversa
-            cnxn = MatrizCuadrada(f"{anxn.get_nombre()}^-1", inv)
+            cnxn = MatrizCuadrada(f"{anxn.get_nombre()}^-1", inv.tolist())
             
             return cnxn
         
@@ -189,6 +239,10 @@ class MatrizCuadrada(MatrizNxm):
         
         
     def transpuesta(anxn):
+        #Verificar que anxn sea un objeto matirz cuadrada
+        if not isinstance(anxn, MatrizCuadrada):
+            raise TypeError("El parámetro debe ser un objeto de la clase MatrizCuadrada")
+        
         #extraer la matriz del objeto
         matriz = anxn.get_matriz()
         
@@ -203,12 +257,16 @@ class MatrizCuadrada(MatrizNxm):
         
         
         #Crear un objeto "A^T cuadrada que es la transpuesta de A
-        transpuesta = MatrizCuadrada(f"{anxn.get_nombre()}^T", trans)
+        transpuesta = MatrizCuadrada(f"{anxn.get_nombre()}^T", trans.tolist())
         
         return transpuesta
         
         
     def valores_propios(anxn):
+        
+        #Verificar que anxn sea un objeto matirz cuadrada
+        if not isinstance(anxn, MatrizCuadrada):
+            raise TypeError("El parámetro debe ser un objeto de la clase MatrizCuadrada")
         
         #obtener matriz 
         matri = anxn.get_matriz()
@@ -223,6 +281,10 @@ class MatrizCuadrada(MatrizNxm):
         
         
     def vectores_propios(anxn):
+        #Verificar que anxn sea un objeto matirz cuadrada
+        if not isinstance(anxn, MatrizCuadrada):
+            raise TypeError("El parámetro debe ser un objeto de la clase MatrizCuadrada")
+        
         #obtener matriz 
         matriz = anxn.get_matriz()
         
@@ -232,10 +294,28 @@ class MatrizCuadrada(MatrizNxm):
         # Devolver los vectores propios
         return vectores_propios    
         
-    
+    def valores_singulares(anxn):
+        #Verificar que anxn sea un objeto matirz cuadrada
+        if not isinstance(anxn, MatrizCuadrada):
+            raise TypeError("El parámetro debe ser un objeto de la clase MatrizCuadrada")    
         
+        #obtener matriz 
+        matri = anxn.get_matriz()
         
+        # Definir una matriz para numpy
+        matriz = np.array(matri)
         
+        # Calcular la SVD
+        U, S, VT = np.linalg.svd(matriz)
+        
+        #Crear diccionario con los valores singulares obtenidos
+        dicci = {
+        'U': U,
+        "S": S,
+        "V^T": VT
+        }
+        
+        return dicci
         
         
         

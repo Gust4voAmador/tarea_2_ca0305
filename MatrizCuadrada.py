@@ -104,7 +104,7 @@ class MatrizCuadrada(MatrizNxm):
         # https://keepcoding.io/blog/funcion-isinstance-en-python/
         #Verificar que los parametros sean objetos matrizcuadrada
         if not isinstance(anxn, MatrizCuadrada) or not isinstance(bnxn, MatrizCuadrada):
-            raise TypeError("El argumento debe ser un objeto de la clase MiClase")
+            raise TypeError("El argumento debe ser un objeto de la clase MatrizCuadrada")
         
         #crear una matriz compia de anxn para tener molde para la matriz suma
         c = []
@@ -155,8 +155,8 @@ class MatrizCuadrada(MatrizNxm):
             
     def funcion_multiplicacion(obj_matriz_nxn, factor):
         # Verificar que obj_matriz_nxn sea un objeto matriz cuadrada
-        if not isinstance(obj_matriz_nxn, MatrizCuadrada):
-            raise TypeError("El primer parámetro debe ser un objeto de la clase MatrizCuadrada")
+        if not isinstance(obj_matriz_nxn, (MatrizCuadrada,MatrizNxm)):
+            raise TypeError("El primer parámetro debe ser un objeto de la clase MatrizCuadrada o MatrizNxm")
         
         # Caso 1: si el factor es una matriz o un vector (lista de listas o lista simple)
         if isinstance(factor, list):
@@ -200,15 +200,8 @@ class MatrizCuadrada(MatrizNxm):
                 
                  
                 return obj_matriz_producto 
-        
-        
-        
-        
-        
-                  
-       
-                
-        
+
+
         #Caso 2: si el factor es una matriz objeto de la clase MatrizNxm o MatrizCaudrada
         if isinstance(factor, MatrizNxm) or isinstance(factor, MatrizCuadrada):
             
@@ -340,7 +333,7 @@ class MatrizCuadrada(MatrizNxm):
         
         # Definir una matriz para numpy
         matriz = np.array(matri)
-        
+            
         # Calcular la SVD
         U, S, VT = np.linalg.svd(matriz)
         

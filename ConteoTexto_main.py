@@ -6,4 +6,4 @@ Created on Sun Apr 14 21:29:39 2024
 """
 import ConteoTexto
 
-print(ConteoTexto.banda_movil("Pablito clavo un clavito ", 0 , 12))
+print(ConteoTexto.banda_movil("Pablito clavo un clavito ", 0 , 10))

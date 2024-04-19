@@ -69,22 +69,23 @@ def conteo_letras(frase):
 #print(pepe)
 
 def banda_movil(frase, mini, maxi):
-    
-    # Separar frase en una lista con sus palabras
-    lista_palabras = frase.split()
-    
-    # Crear un string concatenando las palabras (le estoy quitando espacios)
-    frase_pegada = "".join(lista_palabras)
 
     # Obtener la frase delimitada y debe cumplir ciertas condiciones
-    if mini >= 0 and maxi <= len(frase_pegada) and mini < maxi:
+    if mini >= 0 and maxi <= len(frase) and mini < maxi:
         
-        subfrase = frase_pegada[mini:maxi]  # Corregido el slicing
-
+        subfrase = frase[mini:maxi]  # Obtener la frase cortada con los parametros
+        
+        # Separar subfrase en una lista con sus palabras
+        lista_palabras = subfrase.split()
+        
+        # Crear un string concatenando las palabras (le estoy quitando espacios)
+        frase_pegada = "".join(lista_palabras)
+        print(frase_pegada)
+        #Diccionario para guardar la letra y sus apariciones
         dicc_subfrase = {} 
         
         # Crear una lista con las letras sin repetir
-        lista_letras = list(subfrase)
+        lista_letras = list(frase_pegada)
         set_letras = list(set(lista_letras))
         
         # For que recorra las letras sin repetir
@@ -105,7 +106,7 @@ def banda_movil(frase, mini, maxi):
         return "Los parámetros ingresados son inválidos"
 
 
-print(banda_movil("holi jeje EE", 4, 10))
+#print(banda_movil("holi jeje EE", 4, 10))
 
 
 

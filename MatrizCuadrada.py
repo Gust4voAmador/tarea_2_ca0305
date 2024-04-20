@@ -149,9 +149,7 @@ class MatrizCuadrada(MatrizNxm):
     def array_a_matriz(array, num_columnas):
         return [fila.tolist() for fila in array]
     
-    
-    
-    
+
             
     def funcion_multiplicacion(obj_matriz_nxn, factor):
         # Verificar que obj_matriz_nxn sea un objeto matriz cuadrada

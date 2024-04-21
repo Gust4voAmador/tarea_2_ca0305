@@ -32,11 +32,11 @@ print(np.array(factor).shape)
 print(isinstance(factor, list))
 
 
-print(b.get_matriz())
+print(b.get_matriz)
 
 print(MatrizCuadrada.funcion_suma(a, b))
 
-print(a.get_matriz())
+print(a.get_matriz)
 
 print(MatrizCuadrada.funcion_multiplicacion(d, d    ))
 
@@ -77,7 +77,7 @@ A_I = MatrizCuadrada.funcion_suma(I, A)
 print(A_I)
 
 #Hacer la matriz A_2 del tipo cuadrada
-A_2_cuadra = MatrizCuadrada("A_I", A_2.get_matriz())
+A_2_cuadra = MatrizCuadrada("A_I", A_2.get_matriz)
 
 I_A_A2 = MatrizCuadrada.funcion_suma(A_I, A_2_cuadra)
 

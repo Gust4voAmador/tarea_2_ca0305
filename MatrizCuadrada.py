@@ -216,7 +216,7 @@ class MatrizCuadrada(MatrizNxm):
 
     # Función estática para sumar dos matrices cuadradas
     @staticmethod 
-    def funcion_suma(anxn,bnxn):
+    def metodo_suma(anxn,bnxn):
         """
         Función estática para sumar dos matrices cuadradas.
 
@@ -235,7 +235,9 @@ class MatrizCuadrada(MatrizNxm):
         #Verificar que los parametros sean objetos matrizcuadrada
         if not isinstance(anxn, MatrizCuadrada) or not isinstance(bnxn, MatrizCuadrada):
             raise TypeError("El argumento debe ser un objeto de la clase MatrizCuadrada")
-        
+            
+        if anxn.get_filas != bnxn.get_filas or anxn.get_columnas != bnxn.get_columnas:
+            raise TypeError("Ambos objetos de la clase MatrizCuadrada deben tener una matriz de iguales dimensiones")
         #crear una matriz compia de anxn para tener molde para la matriz suma
         c = []
         
@@ -313,7 +315,7 @@ class MatrizCuadrada(MatrizNxm):
 
     # Función estática para multiplicar un objeto MatrizCuadrada por algo
     @staticmethod        
-    def funcion_multiplicacion(obj_matriz_nxn, factor):
+    def metodo_multiplicacion(obj_matriz_nxn, factor):
         """
         Función estática para multiplicar una matriz cuadrada (objeto MatrizCuadrada) por un factor.
 
@@ -446,7 +448,7 @@ class MatrizCuadrada(MatrizNxm):
             inv = np.linalg.inv(matriz)
             
             #Crear nuevo objeto matriz cuadrada que sea la inversa
-            cnxn = MatrizCuadrada(f"{anxn.get_nombre}^-1", inv.tolist())
+            cnxn = MatrizCuadrada(f"({anxn.get_nombre})^-1", inv.tolist())
             
             return cnxn
         
@@ -488,7 +490,7 @@ class MatrizCuadrada(MatrizNxm):
         
         
         #Crear un objeto "A^T cuadrada que es la transpuesta de A
-        transpuesta = MatrizCuadrada(f"{anxn.get_nombre()}^T", trans.tolist())
+        transpuesta = MatrizCuadrada(f"{anxn.get_nombre}^T", trans)
         
         return transpuesta
         

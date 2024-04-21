@@ -17,12 +17,12 @@ from Df import Df
 #Hacer que df_colesterol sea un objeto de la clase Df para usar los métodos
 df_coles_clase = Df(df_colesterol)
 
-#df_colesterol_estadisticas = df_coles_clase.dicc_estadisticas()
+df_colesterol_estadisticas = df_coles_clase.dicc_estadisticas()
 
-print(df_coles_clase.dicc_estadisticas())
+#print(df_coles_clase.dicc_estadisticas())
 
 
-print(df_coles_clase.caracte_columna("altura"))
+#print(df_coles_clase.caracte_columna("altura"))
 
-print(df_coles_clase.normalizardef(None))
+print(df_coles_clase.normalizardf(None))
 

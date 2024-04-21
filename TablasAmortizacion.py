@@ -112,7 +112,7 @@ class TablaAmortizacion():
         self.tasa_base = tasa_interes_anual
         self.periodos = periodos
     
-    #Metodos Get publicos
+    #get
     def get_dataframe(self):
         return self.dataframe
     
@@ -124,6 +124,21 @@ class TablaAmortizacion():
     
     def get_periodos(self):
         return self.periodos
+    
+    # Set
+    def set_dataframe(self, dataframe):
+        self.dataframe = dataframe
+    
+    def set_monto(self, monto):
+        self.monto = monto
+    
+    def set_tasa_base(self, tasa_base):
+        self.tasa_base = tasa_base
+    
+    def set_periodos(self, periodos):
+        self.periodos = periodos
+    
+    
     
     #metodo str
     def __str__(self):
@@ -235,7 +250,12 @@ class TablaAmortizacionPersonalizada(TablaAmortizacion):
     def get_diferencia_tasa_base_year_3_mas(self): 
         return self.diferencia_year_3
     
+    # Set
+    def set_diferencia_tasa_base_year_1(self, diferencia_year_1):
+        self.diferencia_year_1 = diferencia_year_1
     
+    def set_diferencia_tasa_base_year_3_mas(self, diferencia_year_3):
+        self.diferencia_year_3 = diferencia_year_3
     
     
     

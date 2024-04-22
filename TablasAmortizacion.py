@@ -10,11 +10,27 @@ import pandas as pd
 from amortization.schedule import amortization_schedule
 
 class TablaAmortizacion():
-    #constructor
-    #Donde monto:principal, tasa_anual: tasa de interés mensual fija (entre 0 y 1)
-    #periodos: numero de meses del prestamo
+    """Clase para generar tablas de amortización."""
+    
     
     def __init__(self, periodos,tasa_interes_anual, monto ,tasa_variable):
+        """
+        Constructor de la clase TablaAmortizacion para tasa fija y para tasa
+        variabel. Cuando la tasa es varible el monto pagado por mes va a cam-
+        biar ya que el número de periodos indicados es constante.
+        La tasa variable hace que que el primer año paga 2% menos de tasa de 
+        interés, segundo año asume la tasa de interés base, y para los próximos
+        años, la tasa aumenta en un 4%.
+
+        Args:
+            periodos (int): Número de periodos mensuales del préstamo 
+            tasa_interes_anual (float): Tasa de interés anual.
+            monto (float): Monto principal del préstamo.
+            tasa_variable (bool): Indica si la tasa de interés es variable.
+
+        Raises:
+            ValueError: Si algún parámetro es inválido.
+        """
         
         #Establecer diferencias por defecto (Punto 3 de las indicaciones)
         diferencia_base_primer_ano = -0.02
@@ -112,60 +128,112 @@ class TablaAmortizacion():
         self.tasa_base = tasa_interes_anual
         self.periodos = periodos
     
-    #get
+    @property
     def get_dataframe(self):
+        """Getter para obtener el DataFrame de la tabla de amortización."""
         return self.dataframe
     
+    @property 
     def get_monto(self):
+        """Getter para obtener el monto principal."""
         return self.monto
-
+    
+    @property
     def get_tasa_base(self):
+        """Getter para obtener la tasa de interés base."""
         return self.tasa_base
     
+    @property
     def get_periodos(self):
+        """Getter para obtener el número de periodos."""
         return self.periodos
     
-    # Set
+    @get_dataframe.setter
     def set_dataframe(self, dataframe):
+        """Setter para establecer el DataFrame de la tabla de amortización."""
         self.dataframe = dataframe
     
+    @get_monto.setter
     def set_monto(self, monto):
+        """Setter para establecer el monto principal."""
         self.monto = monto
     
+    @get_tasa_base.setter
     def set_tasa_base(self, tasa_base):
+        """Setter para establecer la tasa de interés base."""
         self.tasa_base = tasa_base
     
+    @get_periodos.setter
     def set_periodos(self, periodos):
+        """Setter para establecer el número de periodos."""
         self.periodos = periodos
     
     
     
     #metodo str
     def __str__(self):
-        
+        """Representación en cadena de la tabla de amortización."""
         #Crear string con una frase y que imprima el df de la tabla
-        tabla_str = f'{self.get_dataframe()}'
+        tabla_str = f'{self.get_dataframe}'
         return tabla_str
     
     def estado_credito(self, mes):
+        """
+        Muestra el estado del crédito para un mes específico, extrayendo la fila
+        de ese mes mostrando:
+            -Monto pagado 
+            -Monto de intereses
+            -Total de principal abonado 
+            -Balance: total debido
+            
+
+        Args:
+            mes (int): Número del mes.
+
+        Raises:
+            ValueError: Si el número de mes es inválido o fuera del rango de meses.
+        """
         #verificar que el numero del mes sea cuerente
         if not isinstance(mes, int):
             raise ValueError("El número de mes debe de ser tipo int")
             
         if mes < 1 or mes > self.get_periodos():
-            raise ValueError(f'Número de mes invalido. Rango de meses es de [1 a {self.get_periodos()}]')
+            raise ValueError(f'Número de mes invalido. Rango de meses es de [1 a {self.get_periodos}]')
         
         #https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_dict.html
         # Imprimir la primera fila segun el numero del mes -1 y hacerlo diccio
-        dicc = self.get_dataframe().iloc[mes-1].to_dict()
+        dicc = self.get_dataframe.iloc[mes-1].to_dict()
         
         return print(dicc)
     
     #Esta clase hereda de TablaAmortizacion, no obstante se copió bastante del constructor de la de arriab
     #Ya que no encontré otra forma de hacer para disminuir la cantidad de codigo, pero no se pudo
 class TablaAmortizacionPersonalizada(TablaAmortizacion):
+    """
+    Clase para generar tablas de amortización con tasas personalizadas.
+
+    Hereda de TablaAmortizacion.
+    """
     
-    def __init__(self, periodos,tasa_interes_anual, monto ,tasa_variable, diferencia_year_1,diferencia_year_3):
+    def __init__(self, periodos,tasa_interes_anual, monto ,tasa_variable, tasa_year_1,tasa_year_3):
+        """
+        Constructor de la clase TablaAmortizacionPersonalizada. Se indica
+        la tasa base en el primer año y tambien se indica la tasa base para el tercer año
+        y superiores.
+
+        Args:
+            periodos (int): Número de periodos mensuales del préstamo.
+            tasa_interes_anual (float): Tasa de interés anual.
+            monto (float): Monto principal del préstamo.
+            tasa_variable (bool): Indica si la tasa de interés es variable.
+            tasa_year_1 (float): Tasa de interés para el primer año.
+            tasa_year_3 (float): Tasa de interés para el tercer año y más.
+
+        Raises:
+            ValueError: Si algún parámetro es inválido o si para el primer año
+            no ingrese una diferenica negativa y para el tercer año o mas no es 
+            positiva
+        """
         
         #convertir tasa anual a mesual
         tasa_interes = ((1+tasa_interes_anual)**(1/12))-1
@@ -182,13 +250,13 @@ class TablaAmortizacionPersonalizada(TablaAmortizacion):
         df = None
         
         #Verificar que lo variable de las tasas sean negativas y positivas respectivamente
-        if diferencia_year_1 > 0 or diferencia_year_3 < 0:
-            raise ValueError("Para el primer año ingrese una diferenica negativa y para el tercer año o mas debe ser positiva")
+        if tasa_year_1 < 0 or tasa_year_1 > 1 or tasa_year_3 < 0 or tasa_year_3> 1:
+            raise ValueError("Tasa variables inválidas. Deben estar entres 0 y 1")
         
         
         #Generar primer año de la tabla (12 periodos)
         #Ajuste de la tasa dado que es +4% anual se hace convergencia a mensual
-        table1 = amortization_schedule(monto*(1.05), tasa_interes-(((1+abs(diferencia_year_1))**(1/12))-1),  periodos)
+        table1 = amortization_schedule(monto*(1.05), ((1+tasa_year_1)**(1/12))-1,  periodos)
         # Convertir la tabla en un DataFrame de pandas
         df1 = pd.DataFrame(table1, columns=["Number", "Amount", "Interest", "Principal", "Balance"])
         
@@ -221,7 +289,7 @@ class TablaAmortizacionPersonalizada(TablaAmortizacion):
             balance2 = df2.iloc[11]["Balance"]
             #Generar primer año de la tabla de 12 periodos (segundo año)
             #Ajuste de la tasa dado que es +4% anual se hace convergencia a mensual
-            table3 = amortization_schedule(balance2, tasa_interes+(((1+diferencia_year_3)**(1/12))-1),  periodos-24)
+            table3 = amortization_schedule(balance2, ((1+tasa_year_3)**(1/12))-1,  periodos-24)
             # Convertir la tabla en un DataFrame de pandas
             df3 = pd.DataFrame(table3, columns=["Number", "Amount", "Interest", "Principal", "Balance"])
             
@@ -238,28 +306,35 @@ class TablaAmortizacionPersonalizada(TablaAmortizacion):
         df["Month"] = range(1, len(df) + 1)
         
         #atributos publicos nuevos
-        self.diferencia_year_1 = diferencia_year_1
-        self.diferencia_year_3 = diferencia_year_3
+        self.tasa_year_1 = tasa_year_1
+        self.tasa_year_3 = tasa_year_3
         #Vuelvo a establecer el atributo dataframe
         self.dataframe = df
     
-    #Get
-    def get_diferencia_tasa_base_year_1(self): 
-        return self.diferencia_year_1
+    #Getter
+    @property
+    def get_tasa_year_1(self): 
+        """Getter para obtener la tasa para el primer año."""
+        return self.tasa_year_1
         
-    def get_diferencia_tasa_base_year_3_mas(self): 
-        return self.diferencia_year_3
+    @property
+    def get_tasa_year_3(self): 
+        """Getter para obtener la tasa para el tercer año y más."""
+        return self.tasa_year_3
     
-    # Set
-    def set_diferencia_tasa_base_year_1(self, diferencia_year_1):
-        self.diferencia_year_1 = diferencia_year_1
+    # Setters
+    @get_tasa_year_1.setter
+    def tasa_base_year_1(self, tasa_year_1):
+        """Setter para establecer la tasa para el primer año."""
+        self.tasa_year_1 = tasa_year_1
     
-    def set_diferencia_tasa_base_year_3_mas(self, diferencia_year_3):
-        self.diferencia_year_3 = diferencia_year_3
+    @get_tasa_year_3.setter
+    def tasa_base_year_3_mas(self, tasa_year_3):
+        """Setter para establecer la tasa para el tercer año y más."""
+        self._tasa_year_3 = tasa_year_3
     
     
-    
-    
+
     
     
     

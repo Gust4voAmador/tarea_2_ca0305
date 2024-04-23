@@ -18,27 +18,27 @@ class AnalizadorTexto:
         :type frase: str
         """
         # atributos
-        self.frase = frase
+        self._frase = frase
     
     @property 
-    def get_frase(self):
+    def frase(self):
         """
         Getter para obtener la frase actual.
 
         :return: La frase actual.
         :rtype: str
         """
-        return self.frase
+        return self._frase
     
-    @get_frase.setter
-    def set_frase(self, nueva_frase):
+    @frase.setter
+    def frase(self, nueva_frase):
         """
         Setter para actualizar la frase.
 
         :param nueva_frase: La nueva frase.
         :type nueva_frase: str
         """
-        self.frase = nueva_frase
+        self._frase = nueva_frase
     
     def conteo_palabras(self):
         """
@@ -50,7 +50,7 @@ class AnalizadorTexto:
        """       
         
         # Separar frase en palabras y ponerlos en una lista
-        lista_palabras = self.get_frase.split()
+        lista_palabras = self.frase.split()
         # Utilizar set para obtener una lista de las palabras no repetidas
         set_palabras = list(set(lista_palabras))
         # Crar diccionario vacío para guardar el número de palabras en la frase
@@ -73,7 +73,7 @@ class AnalizadorTexto:
         :rtype: dict
         """
         # Obtener lista con las palabra de la frase sin repetidas
-        set_palabras = list(set(self.get_frase.split()))
+        set_palabras = list(set(self.frase.split()))
         dicc_grande = {}
         # For que recorra el set de palabras
         for palabra in set_palabras:
@@ -108,8 +108,8 @@ class AnalizadorTexto:
         :rtype: dict or str
         """
         # Obtener la frase delimitada y debe cumplir ciertas condiciones
-        if mini >= 0 and maxi <= len(self.get_frase) and mini < maxi:
-            subfrase = self.get_frase[mini:maxi]  # Obtener la frase cortada con los parametros
+        if mini >= 0 and maxi <= len(self.frase) and mini < maxi:
+            subfrase = self.frase[mini:maxi]  # Obtener la frase cortada con los parametros
             # Separar subfrase en una lista con sus palabras
             lista_palabras = subfrase.split()
             # Crear un string concatenando las palabras (le estoy quitando espacios)
@@ -131,5 +131,3 @@ class AnalizadorTexto:
             return dicc_subfrase
         else:
             return "Los parámetros ingresados son inválidos"
-
-    

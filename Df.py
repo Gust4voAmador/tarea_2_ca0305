@@ -17,10 +17,10 @@ class Df():
         df (pd.DataFrame): DataFrame de Pandas para análisis.
 
     Attributes:
-        num_filas (int): Cantidad de filas en el DataFrame.
-        num_columnas (int): Cantidad de columnas en el DataFrame.
-        tipo_columnas (dict): Tipos de datos de cada columna en el DataFrame.
-        nulos_por_columna (dict): Cantidad de valores nulos por columna en el DataFrame.
+        _num_filas (int): Cantidad de filas en el DataFrame.
+        _num_columnas (int): Cantidad de columnas en el DataFrame.
+        _tipo_columnas (dict): Tipos de datos de cada columna en el DataFrame.
+        _nulos_por_columna (dict): Cantidad de valores nulos por columna en el DataFrame.
         dataframe (pd.DataFrame): DataFrame de Pandas para análisis.
     """
     #constructor
@@ -38,8 +38,8 @@ class Df():
         # Obtener numero de filas y columnas
         filas, columnas = df.shape
         
-        self.num_filas = filas #Cantidad de filas
-        self.num_columnas = columnas #Cantidad de columnas
+        self._num_filas = filas #Cantidad de filas
+        self._num_columnas = columnas #Cantidad de columnas
         
         #tipos de columnas
         #https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.dtypes.html
@@ -48,68 +48,68 @@ class Df():
         
         #Usar to_dict() para convertir la serie en un diccionario
         #https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_dict.html
-        self.tipo_columnas = tipo_cols.to_dict()
+        self._tipo_columnas = tipo_cols.to_dict()
         
         #utilizar el método sum() después de aplicar la función isnull(), esto
         #para sumar las veces que sea null por columnas, devuelve una serie
         #https://docs.kanaries.net/es/topics/Pandas/pandas-where 
         null_columna = df.isnull().sum()
-        self.nulos_por_columna = null_columna.to_dict()
+        self._nulos_por_columna = null_columna.to_dict()
         
         #El DataFrame
-        self.dataframe = df
+        self._dataframe = df
         
     # Métodos getter
     @property
-    def get_cantidad_columnas(self):
+    def num_columnas(self):
         """Obtiene la cantidad de columnas en el DataFrame."""
-        return self.num_columnas
+        return self._num_columnas
 
     @property
-    def get_cantidad_filas(self):
+    def num_filas(self):
         """Obtiene la cantidad de filas en el DataFrame."""
-        return self.num_filas
+        return self._num_filas
 
     @property
-    def get_tipo_columnas(self):
+    def tipo_columnas(self):
         """Obtiene los tipos de datos de cada columna en el DataFrame."""
-        return self.tipo_columnas
+        return self._tipo_columnas
     
     @property
-    def get_nulos_por_columna(self):
+    def nulos_por_columna(self):
         """Obtiene la cantidad de valores nulos por columna en el DataFrame."""
-        return self.nulos_por_columna
+        return self._nulos_por_columna
     
     @property
-    def get_dataframe(self):
+    def dataframe(self):
         """Obtiene el DataFrame de Pandas."""
-        return self.dataframe
+        return self._dataframe
 
     # Métodos setter
-    @get_cantidad_columnas.setter
-    def set_cantidad_columnas(self, cantidad_columnas):
+    @num_columnas.setter
+    def num_columnas(self, cantidad_columnas):
         """Establece la cantidad de columnas en el DataFrame."""
-        self.num_columnas = cantidad_columnas
+        self._num_columnas = cantidad_columnas
 
-    @get_cantidad_filas.setter
-    def set_cantidad_filas(self, cantidad_filas):
+    @num_filas.setter
+    def num_filas(self, cantidad_filas):
         """Establece la cantidad de filas en el DataFrame."""
-        self.num_filas = cantidad_filas
+        self._num_filas = cantidad_filas
 
-    @get_tipo_columnas.setter
-    def set_tipo_columnas(self, tipo_columnas):
+    @tipo_columnas.setter
+    def tipo_columnas(self, tipo_columnas):
         """Establece los tipos de datos de cada columna en el DataFrame."""
-        self.tipo_columnas = tipo_columnas
+        self._tipo_columnas = tipo_columnas
     
-    @get_nulos_por_columna.setter
-    def set_nulos_por_columna(self, nulos_por_columna):
+    @nulos_por_columna.setter
+    def nulos_por_columna(self, nulos_por_columna):
         """Establece la cantidad de valores nulos por columna en el DataFrame."""
-        self.nulos_por_columna = nulos_por_columna
+        self._nulos_por_columna = nulos_por_columna
     
-    @get_dataframe.setter
-    def set_dataframe(self, dataframe):
+    @dataframe.setter
+    def dataframe(self, dataframe):
         """Establece el DataFrame de Pandas."""
-        self.dataframe = dataframe
+        self._dataframe = dataframe
 
     #Crear metodo que devuelva el diccionario con las estadísticas 
     def dicc_estadisticas(self):
@@ -129,10 +129,10 @@ class Df():
         
         #crear diccionario con ayuda de los gets
         estadis = {
-        'cantidad_filas': self.get_cantidad_filas,
-        'cantidad_columnas': self.get_cantidad_columnas,
-        'tipos_columnas': self.get_tipo_columnas,
-        'valores_nulos_por_columna': self.get_nulos_por_columna
+        'cantidad_filas': self.num_filas,
+        'cantidad_columnas': self.num_columnas,
+        'tipos_columnas': self.tipo_columnas,
+        'valores_nulos_por_columna': self.nulos_por_columna
         }
         return estadis
 
@@ -163,7 +163,7 @@ class Df():
         """
         
         #Obtener el DataFrame del objeto
-        dataf = self.get_dataframe
+        dataf = self.dataframe
         
         # Obtener una lista de los nombres de las columnas
         #https://ioflood.com/blog/dataframe-to-list-pandas/
@@ -247,7 +247,7 @@ class Df():
         """
         
         #extraer df
-        dataf = self.get_dataframe
+        dataf = self.dataframe
         
         #Si se indica columna se hace para la idicada
         if not col is None:

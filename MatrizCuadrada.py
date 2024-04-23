@@ -27,41 +27,41 @@ class MatrizNxm():
         
         #atributos
         self.__nombre = nombre
-        self.matriz = matriz_nxm
-        self.filas = len(matriz_nxm)
-        self.columnas = len(matriz_nxm[0])
+        self._matriz = matriz_nxm
+        self._filas = len(matriz_nxm)
+        self._columnas = len(matriz_nxm[0])
 
     
     @property
-    def get_nombre(self): 
+    def nombre(self): 
         """
         Método getter para obtener el nombre de la matriz.
         """
         return self.__nombre
     
     @property    
-    def get_filas(self):
+    def filas(self):
         """
         Método getter para obtener el número de filas de la matriz.
         """
-        return self.filas
+        return self._filas
     
     @property
-    def get_columnas(self): 
+    def columnas(self): 
         """
         Método getter para obtener el número de columnas de la matriz.
         """
-        return self.columnas
+        return self._columnas
     
     @property
-    def get_matriz(self):
+    def matriz(self):
         """
         Método getter para obtener la matriz.
         """
-        return self.matriz
+        return self._matriz
     
-    @get_nombre.setter
-    def set_nombre(self, new_name):
+    @nombre.setter
+    def nombre(self, new_name):
         """
         Método setter para cambiar el nombre de la matriz.
 
@@ -74,18 +74,18 @@ class MatrizNxm():
         self.__nombre = new_name
         return self.__nombre
     
-    @get_filas.setter
-    def set_filas(self, new_filas):
+    @filas.setter
+    def filas(self, new_filas):
         """
         Setter para actualizar el número de filas.
 
         :param new_filas: El nuevo número de filas.
         :type new_filas: int
         """
-        self.__filas = new_filas
+        self._filas = new_filas
     
-    @get_columnas.setter
-    def set_columnas(self, new_columnas):
+    @columnas.setter
+    def columnas(self, new_columnas):
         """
         Setter para actualizar el número de columnas.
 
@@ -94,8 +94,8 @@ class MatrizNxm():
         """
         self.__columnas = new_columnas
         
-    @get_matriz.setter
-    def set_matriz(self, new_matriz):
+    @matriz.setter
+    def matriz(self, new_matriz):
         """
         Método setter para cambiar la matriz.
 
@@ -109,8 +109,8 @@ class MatrizNxm():
             ValueError: Si el parámetro no es una matriz (lista de listas).
         """
         if isinstance(new_matriz[0], list):
-            self.matriz = new_matriz
-            return self.matriz
+            self._matriz = new_matriz
+            return self._matriz
         else:
             raise ValueError("El parámetro debe ser una matriz (lista de listas)")
             
@@ -129,13 +129,13 @@ class MatrizNxm():
             IndexError: Si el índice de fila o columna está fuera de rango.
         """
         # Verificar que fila y columna estén dentro de los límites de la matriz
-        if fila < 0 or fila >= len(self.matriz):
+        if fila < 0 or fila >= len(self._matriz):
             raise IndexError("Índice de fila fuera de rango")
-        if columna < 0 or columna >= len(self.matriz[0]):
+        if columna < 0 or columna >= len(self._matriz[0]):
             raise IndexError("Índice de columna fuera de rango")
     
         # Establecer el valor en la posición especificada
-        self.matriz[fila][columna] = valor
+        self._matriz[fila][columna] = valor
     
     
     
@@ -151,7 +151,7 @@ class MatrizNxm():
         # Construir una cadena con el nombre de la matriz 
         matriz_str = f"Matriz '{self.__nombre}':\n"
         #for que se meta en la filas
-        for fila in self.matriz:
+        for fila in self._matriz:
             #for que recorra las filas
             for i in fila:
                 matriz_str += f"{i} "  # Convierte cada int en str
@@ -180,18 +180,18 @@ class MatrizCuadrada(MatrizNxm):
         # Verificar que no es cuadrada dentro del constructor
         # https://docs.python.org/3/tutorial/errors.html
         #Los atributos filas y cols son privados por lo que se usa get
-        if self.get_filas != self.get_columnas:
+        if self.filas != self.columnas:
             raise ValueError("La matriz debe tener igual número de filas y columnas")
     
     @property
-    def get_matriz(self):
+    def matriz(self):
         """
         Método getter para obtener la matriz.
         """
-        return self.matriz
+        return self._matriz
     
-    @get_matriz.setter        
-    def set_matriz_cuadrada(self, new_matriz):
+    @matriz.setter        
+    def matriz(self, new_matriz):
         """
         Método setter para cambiar la matriz cuadrada.
 
@@ -210,8 +210,8 @@ class MatrizCuadrada(MatrizNxm):
         elif len(new_matriz[0]) != len(new_matriz):
             raise ValueError("La nueva matriz debe tener igual número de filas y columnas")   
         else:        
-            self.matriz = new_matriz
-            return self.matriz
+            self._matriz = new_matriz
+            return self._matriz
             
 
     # Función estática para sumar dos matrices cuadradas
@@ -236,26 +236,26 @@ class MatrizCuadrada(MatrizNxm):
         if not isinstance(anxn, MatrizCuadrada) or not isinstance(bnxn, MatrizCuadrada):
             raise TypeError("El argumento debe ser un objeto de la clase MatrizCuadrada")
             
-        if anxn.get_filas != bnxn.get_filas or anxn.get_columnas != bnxn.get_columnas:
+        if anxn.filas != bnxn.filas or anxn.columnas != bnxn.columnas:
             raise TypeError("Ambos objetos de la clase MatrizCuadrada deben tener una matriz de iguales dimensiones")
         #crear una matriz compia de anxn para tener molde para la matriz suma
         c = []
         
         # Inicializar la nueva matriz con ceros
-        for i in range(0,anxn.get_filas):
+        for i in range(0,anxn.filas):
             fila = []
-            for j in range(0,anxn.get_columnas):
+            for j in range(0,anxn.columnas):
                 fila.append(0)
             c.append(fila)
         
         #Crear un objeto "A+B cuadrada que es la suma pero con la matriz c
-        cnxn = MatrizCuadrada(f"{anxn.get_nombre}+{bnxn.get_nombre}", c)
+        cnxn = MatrizCuadrada(f"{anxn.nombre}+{bnxn.nombre}", c)
     
         # for anidado para que acceda a cada entradas de la matriz y sume
-        for i in range(0,anxn.get_filas):
-            for j in range(0,anxn.get_columnas):
+        for i in range(0,anxn.filas):
+            for j in range(0,anxn.columnas):
                 #sumar entradas
-                valor = anxn.get_matriz[i][j] + bnxn.get_matriz[i][j] 
+                valor = anxn.matriz[i][j] + bnxn.matriz[i][j] 
                 
                 #cambiar valor de la entrada por la suma en la matriz "A+B"
                 cnxn.set_entrada_matriz(i, j, valor) 
@@ -341,11 +341,11 @@ class MatrizCuadrada(MatrizNxm):
             if isinstance(factor[0], list):
                 # Si el factor es una matriz
                 # Verificar si las matrices son compatibles
-                if obj_matriz_nxn.get_columnas != len(factor[0]):
+                if obj_matriz_nxn.columnas != len(factor[0]):
                     raise TypeError("No se pueden multiplicar. El número de columnas de la primera matriz no coincide con el número de filas de la segunda matriz.")
                 
                 # Convertir la matriz y el vector a arrays de NumPy
-                matriz = np.array(obj_matriz_nxn.get_matriz)
+                matriz = np.array(obj_matriz_nxn.matriz)
                 matriz_2 = np.array(factor)
                 
                 # Usar NumPy para hacer la multiplicacion
@@ -353,18 +353,18 @@ class MatrizCuadrada(MatrizNxm):
                 
                 # Crear objeto MatrizNxm con la matriz producto para retornarlo
                 # tolist() es para convertir el array a matriz otra vez
-                obj_matriz_producto = MatrizNxm("Matriz producto", MatrizCuadrada.array_a_matriz(matriz_producto, obj_matriz_nxn.get_columnas))
+                obj_matriz_producto = MatrizNxm("Matriz producto", MatrizCuadrada.array_a_matriz(matriz_producto, obj_matriz_nxn.columnas))
                 
                 return obj_matriz_producto
             
             else: 
                 # Si el factor es un vector (elementos son float)
                 # Verificar si la matriz y el vector son compatibles 
-                if obj_matriz_nxn.get_columnas != len(factor):
+                if obj_matriz_nxn.columnas != len(factor):
                     raise TypeError("No se pueden multiplicar la matriz y el vector. El número de columnas de la matriz no coincide con el número de elementos del vector.")
                  
                 # Convertir la matriz y el vector a arrays de NumPy
-                matriz = np.array(obj_matriz_nxn.get_matriz)
+                matriz = np.array(obj_matriz_nxn.matriz)
                 vector = np.array(factor)
                  
                 # Usar NumPy para hacer la multiplicacion
@@ -373,7 +373,7 @@ class MatrizCuadrada(MatrizNxm):
                 # Crear objeto MatrizNxm con la matriz producto para retornarlo
                 # tolist() es para convertir el array a matriz otra vez
                 
-                obj_matriz_producto = MatrizNxm("Matriz producto", MatrizCuadrada.array_a_vector(matriz_producto, obj_matriz_nxn.get_columnas))
+                obj_matriz_producto = MatrizNxm("Matriz producto", MatrizCuadrada.array_a_vector(matriz_producto, obj_matriz_nxn.columnas))
                 
                  
                 return obj_matriz_producto 
@@ -383,12 +383,12 @@ class MatrizCuadrada(MatrizNxm):
         if isinstance(factor, MatrizNxm) or isinstance(factor, MatrizCuadrada):
             
             # Verificar si las matrices son son compatibles
-            if obj_matriz_nxn.get_columnas != factor.get_filas:
+            if obj_matriz_nxn.columnas != factor.filas:
                 raise TypeError("No se pueden multiplicar. El número de columnas de la primera matriz no coincide con el numero de filas de la segunda matriz")
             
             # Convertir las matrices a arrays de NumPy
-            matriz_1 = np.array(obj_matriz_nxn.get_matriz)
-            matriz_2 = np.array(factor.get_matriz)
+            matriz_1 = np.array(obj_matriz_nxn.matriz)
+            matriz_2 = np.array(factor.matriz)
             
             #Usar NumPy para hacer la multiplicacion
             matriz_producto = np.dot(matriz_1, matriz_2)
@@ -404,7 +404,7 @@ class MatrizCuadrada(MatrizNxm):
         elif isinstance(factor, float) or isinstance(factor, int) :
             
             # Convertir la matriz a arrays de NumPy
-            matriz = np.array(obj_matriz_nxn.get_matriz)
+            matriz = np.array(obj_matriz_nxn.matriz)
         
             #Multiplicar escalar con la matriz
             matriz_producto = matriz * factor
@@ -441,19 +441,19 @@ class MatrizCuadrada(MatrizNxm):
             raise TypeError("El parámetro debe ser un objeto de la clase MatrizCuadrada")
         
         #extraer la matriz del objeto
-        matriz = anxn.get_matriz
-        
+        matriz = anxn.matriz
+    
         #Calcula la inversa de la matriz con librería de numpy
         try:
             inv = np.linalg.inv(matriz)
             
             #Crear nuevo objeto matriz cuadrada que sea la inversa
-            cnxn = MatrizCuadrada(f"({anxn.get_nombre})^-1", inv.tolist())
+            cnxn = MatrizCuadrada(f"({anxn.nombre})^-1", inv.tolist())
             
             return cnxn
         
         except np.linalg.LinAlgError:
-            print(f'La matriz {anxn.get_nombre} no es invertible')
+            print(f'La matriz {anxn.nombre} no es invertible')
         
         
         
@@ -477,20 +477,20 @@ class MatrizCuadrada(MatrizNxm):
             raise TypeError("El parámetro debe ser un objeto de la clase MatrizCuadrada")
         
         #extraer la matriz del objeto
-        matriz = anxn.get_matriz
+        matriz = anxn.matriz
         
         #crear copia de la matriz para tener el molde para transpuesta
         trans = copy.deepcopy(matriz)
         
         
         #Realizar la operacion con for anidados
-        for i in range(0,anxn.get_filas):
-            for j in range(0,anxn.get_columnas):
+        for i in range(0,anxn.filas):
+            for j in range(0,anxn.columnas):
                 trans[i][j] = matriz[j][i]
         
         
         #Crear un objeto "A^T cuadrada que es la transpuesta de A
-        transpuesta = MatrizCuadrada(f"{anxn.get_nombre}^T", trans)
+        transpuesta = MatrizCuadrada(f"{anxn.nombre}^T", trans)
         
         return transpuesta
         
@@ -516,7 +516,7 @@ class MatrizCuadrada(MatrizNxm):
             raise TypeError("El parámetro debe ser un objeto de la clase MatrizCuadrada")
         
         #obtener matriz 
-        matri = anxn.get_matriz
+        matri = anxn.matriz
         
         # Definir la matriz segun np para usar la librería
         matriz = np.array(matri)
@@ -547,7 +547,7 @@ class MatrizCuadrada(MatrizNxm):
             raise TypeError("El parámetro debe ser un objeto de la clase MatrizCuadrada")
         
         #obtener matriz 
-        matriz = anxn.get_matriz
+        matriz = anxn.matriz
         
         # Calcular vectores propios
         valores_propios, vectores_propios = np.linalg.eig(matriz)
@@ -576,7 +576,7 @@ class MatrizCuadrada(MatrizNxm):
             raise TypeError("El parámetro debe ser un objeto de la clase MatrizCuadrada")    
         
         #obtener matriz 
-        matri = anxn.get_matriz
+        matri = anxn.matriz
         
         # Definir una matriz para numpy
         matriz = np.array(matri)

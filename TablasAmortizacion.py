@@ -123,50 +123,50 @@ class TablaAmortizacion():
         
         
         #atributos publicos
-        self.dataframe = df
-        self.monto = monto*(1.05)
-        self.tasa_base = tasa_interes_anual
-        self.periodos = periodos
+        self._dataframe = df
+        self._monto = monto*(1.05)
+        self._tasa_base = tasa_interes_anual
+        self._periodos = periodos
     
     @property
-    def get_dataframe(self):
+    def dataframe(self):
         """Getter para obtener el DataFrame de la tabla de amortización."""
-        return self.dataframe
+        return self._dataframe
     
     @property 
-    def get_monto(self):
+    def monto(self):
         """Getter para obtener el monto principal."""
-        return self.monto
+        return self._monto
     
     @property
-    def get_tasa_base(self):
+    def tasa_base(self):
         """Getter para obtener la tasa de interés base."""
-        return self.tasa_base
+        return self._tasa_base
     
     @property
-    def get_periodos(self):
+    def periodos(self):
         """Getter para obtener el número de periodos."""
-        return self.periodos
+        return self._periodos
     
-    @get_dataframe.setter
-    def set_dataframe(self, dataframe):
+    @dataframe.setter
+    def dataframe(self, dataframe):
         """Setter para establecer el DataFrame de la tabla de amortización."""
-        self.dataframe = dataframe
+        self._dataframe = dataframe
     
-    @get_monto.setter
-    def set_monto(self, monto):
+    @monto.setter
+    def monto(self, monto):
         """Setter para establecer el monto principal."""
-        self.monto = monto
+        self._monto = monto
     
-    @get_tasa_base.setter
-    def set_tasa_base(self, tasa_base):
+    @tasa_base.setter
+    def tasa_base(self, tasa_base):
         """Setter para establecer la tasa de interés base."""
-        self.tasa_base = tasa_base
+        self._tasa_base = tasa_base
     
-    @get_periodos.setter
-    def set_periodos(self, periodos):
+    @periodos.setter
+    def periodos(self, periodos):
         """Setter para establecer el número de periodos."""
-        self.periodos = periodos
+        self._periodos = periodos
     
     
     
@@ -174,7 +174,7 @@ class TablaAmortizacion():
     def __str__(self):
         """Representación en cadena de la tabla de amortización."""
         #Crear string con una frase y que imprima el df de la tabla
-        tabla_str = f'{self.get_dataframe}'
+        tabla_str = f'{self.dataframe}'
         return tabla_str
     
     def estado_credito(self, mes):
@@ -197,12 +197,12 @@ class TablaAmortizacion():
         if not isinstance(mes, int):
             raise ValueError("El número de mes debe de ser tipo int")
             
-        if mes < 1 or mes > self.get_periodos():
+        if mes < 1 or mes > self.periodos:
             raise ValueError(f'Número de mes invalido. Rango de meses es de [1 a {self.get_periodos}]')
         
         #https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_dict.html
         # Imprimir la primera fila segun el numero del mes -1 y hacerlo diccio
-        dicc = self.get_dataframe.iloc[mes-1].to_dict()
+        dicc = self.dataframe.iloc[mes-1].to_dict()
         
         return print(dicc)
     
@@ -306,32 +306,42 @@ class TablaAmortizacionPersonalizada(TablaAmortizacion):
         df["Month"] = range(1, len(df) + 1)
         
         #atributos publicos nuevos
-        self.tasa_year_1 = tasa_year_1
-        self.tasa_year_3 = tasa_year_3
+        self._tasa_year_1 = tasa_year_1
+        self._tasa_year_3_mas = tasa_year_3
         #Vuelvo a establecer el atributo dataframe
-        self.dataframe = df
+        self._dataframe = df
     
     #Getter
     @property
-    def get_tasa_year_1(self): 
+    def tasa_year_1(self): 
         """Getter para obtener la tasa para el primer año."""
-        return self.tasa_year_1
+        return self._tasa_year_1
         
     @property
-    def get_tasa_year_3(self): 
+    def tasa_year_3_mas(self): 
         """Getter para obtener la tasa para el tercer año y más."""
-        return self.tasa_year_3
+        return self._tasa_year_3_mas
+    
+    @property
+    def dataframe(self):
+        """Getter para obtener el DataFrame de la tabla de amortización."""
+        return self._dataframe
     
     # Setters
-    @get_tasa_year_1.setter
-    def tasa_base_year_1(self, tasa_year_1):
+    @tasa_year_1.setter
+    def tasa_year_1(self, tasa_year_1):
         """Setter para establecer la tasa para el primer año."""
-        self.tasa_year_1 = tasa_year_1
+        self._tasa_year_1 = tasa_year_1
     
-    @get_tasa_year_3.setter
-    def tasa_base_year_3_mas(self, tasa_year_3):
+    @tasa_year_3_mas.setter
+    def base_year_3_mas(self, tasa_year_3):
         """Setter para establecer la tasa para el tercer año y más."""
-        self._tasa_year_3 = tasa_year_3
+        self._tasa_year_3_mas = tasa_year_3
+        
+    @dataframe.setter
+    def dataframe(self, dataframe):
+        """Setter para establecer el DataFrame de la tabla de amortización."""
+        self._dataframe = dataframe
     
     
 

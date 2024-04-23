@@ -7,6 +7,7 @@ Created on Fri Apr 19 00:05:32 2024
 
 import pandas as pd
 import numpy as np
+import statistics
 
 #Crear la clase Df donde estarán los métodos 
 class Df():
@@ -275,15 +276,255 @@ class Df():
         return f'La columna {col} normalizada es: \n {df_normalizado} '
         
         
+    def zscore(self, columna, umbral=3):   
+        """
+        Método privado para detecta outliers en una columna de un DataFrame 
+        utilizando el método Z-Score.El método Z-Score es una técnica 
+        estadística para identificar valores atípicos en un conjunto de datos. 
+        Calcula cuántas desviaciones estándar un dato está por encima o por 
+        debajo de la media. Si el Z-Score es mayor que un umbral 
+        (comúnmente 2, 2.5 o 3), el dato se considera atípico. Este método es 
+        útil para detectar valores extremos en los datos.
+    
+        Args:
+            df (DataFrame): DataFrame que contiene los datos.
+            columna (str): Nombre de la columna que se quiere analizar.
+            umbral (float, opcional): Umbral para considerar un valor como 
+            outlier basado en Z-Score.
+                Por defecto es 3.
+    
+        Returns:
+            list: Lista de valores atípicos detectados.
+    
+        Raises:
+            ValueError: Si la columna especificada no existe en el DataFrame 
+            o si el umbral es menor o igual a 0.
+        """
+        # Obtener el df
+        df = self.dataframe
+        
+        # Verificar si la columna especificada existe en el df
+        if columna not in df.columns:
+            raise ValueError(f"La columna '{columna}' no existe en el DataFrame")
+    
+        # Extraer los datos de la columna excluyendo los  NA
+        datos = df[columna].dropna().tolist()
+    
+        
+    
+        # Verificar si el umbral es válido
+        if umbral <= 0:
+            raise ValueError("El umbral debe ser mayor que 0")
+    
+        # Calcular la media y la desviación estándar de los datos
+        media = np.mean(datos)
+        desviacion_estandar = np.std(datos)
+    
+        # Calcular el Z-Score para cada dato
+        z_scores = [(dato - media) / desviacion_estandar for dato in datos]
+    
+        # Identificar los dato atípicos basados en el umbral de Z-Score
+        outliers = [dato for dato, z_score in zip(datos, z_scores) if abs(z_score) > umbral]
+    
+        return outliers
+    
+        
+    def iqr_outliers(self, columna):
+        """
+        Detecta outliers en una columna de un DataFrame utilizando el método del Rango Intercuartílico (IQR).
+    
+        Args:
+            df (DataFrame): DataFrame que contiene los datos.
+            columna (str): Nombre de la columna que se quiere analizar.
+    
+        Returns:
+            list: Lista de valores atípicos detectados.
+    
+        Raises:
+            ValueError: Si la columna especificada no existe en el DataFrame.
+        """
+        # Obtener el df
+        df = self.dataframe
+    
+        # Verificar si la columna especificada existe en el df
+        if columna not in df.columns:
+            raise ValueError(f"La columna '{columna}' no existe en el DataFrame")
+    
+        # Extraer los datos de la columna sin tomar los valores NA
+        datos = df[columna].dropna().tolist()
+    
+        # Calcular el primer y tercer cuartil
+        q1, q3 = np.percentile(datos, [25, 75])
+    
+        # Calcular el rango entre los cuartiles
+        iqr = q3 - q1
+    
+        # Definir los límites para identificar los atípicos
+        limite_inferior = q1 - 1.5 * iqr
+        limite_superior = q3 + 1.5 * iqr
+    
+        # Identificar los valores atípicos con for
+        outliers = []
+        for dato in datos:
+            if dato < limite_inferior or dato > limite_superior:
+                outliers.append(dato)
+    
+        return outliers
         
         
         
+    def std_dev_outliers(self, columna, umbral=3):
+        """
+        Detecta outliers en una columna de un DataFrame utilizando el método de Desviación Estándar.
+    
+        Args:
+            df (DataFrame): DataFrame que contiene los datos.
+            columna (str): Nombre de la columna que se quiere analizar.
+            umbral (float, opcional): Umbral para considerar un valor como outlier basado en Desviación Estándar.
+                Por defecto es 3.
+    
+        Returns:
+            list: Lista de valores atípicos detectados.
+    
+        Raises:
+            ValueError: Si la columna especificada no existe en el DataFrame o si el umbral es menor o igual a 0.
+        """
+        # Obtener el df
+        df = self.dataframe
+        
+        # Verificar si la columna especificada existe en el df
+        if columna not in df.columns:
+            raise ValueError(f"La columna '{columna}' no existe en el DataFrame")
+    
+        # Extraer los datos de la columna excluyendo los valores NA
+        datos = df[columna].dropna().tolist()
+    
+    
+        # Verificar si el umbral es válido
+        if umbral <= 0:
+            raise ValueError("El umbral debe ser mayor que 0")
+    
+        # Calcular la media y la desviación estándar de los datos
+        media = np.mean(datos)
+        desviacion_estandar = np.std(datos)
+    
+        # Identificar los datos atípicos basados en el umbral de dv stan
+        outliers = []
+        for dato in datos:
+            if abs(dato - media) > umbral * desviacion_estandar:
+                outliers.append(dato)
+    
+        return outliers        
+        
+    def tukey_outliers(self, columna):
+        """
+        Detecta outliers en una columna de un DataFrame utilizando el método de Tukey (Bigotes).
+        Calcula el rango intercuartílico (IQR), que es la diferencia entre el tercer cuartil (Q3) y el primer cuartil (Q1).
+        Define los límites inferior y superior para identificar valores atípicos:
+            Límite Inferior: Q1−1.5×IQRQ1−1.5×IQR
+            Límite Superior: Q3+1.5×IQRQ3+1.5×IQR
+            Cualquier valor por debajo del límite inferior o por encima del límite superior se considera atípico.
+    
+        Args:
+            df (DataFrame): DataFrame que contiene los datos.
+            columna (str): Nombre de la columna que se quiere analizar.
+    
+        Returns:
+            list: Lista de valores atípicos detectados.
+    
+        Raises:
+            ValueError: Si la columna especificada no existe en el DataFrame.
+        """
+        # Obtener el df
+        df = self.dataframe
+        
+        # Verificar si la columna especificada existe en el df
+        if columna not in df.columns:
+            raise ValueError(f"La columna '{columna}' no existe en el DataFrame")
+    
+        # Extraer los datos de la columna excluyendo los valores NA
+        datos = df[columna].dropna().tolist()
+    
+        # Calcular el primer y tercer cuartil
+        q1, q3 = np.percentile(datos, [25, 75])
+    
+        # Calcular el rango intercuartílico (IQR)
+        iqr = q3 - q1
+    
+        # Definir los límites para identificar outliers
+        limite_inferior = q1 - 1.5 * iqr
+        limite_superior = q3 + 1.5 * iqr
+    
+        # Identificar los valores atípicos
+        outliers = []
+        for dato in datos:
+            if dato < limite_inferior or dato > limite_superior:
+                outliers.append(dato)
+    
+        return outliers        
+        
+    def seleccionar_datos_atipicos(self, columna):
+        """
+        Selecciona los datos atípicos de una columna utilizando cuatro metodologías diferentes y calcula la moda de cada conjunto de valores atípicos.
+
+        Args:
+            columna (str): Nombre de la columna del DataFrame para analizar.
+
+        Returns:
+            dict: Un diccionario con la información sobre los datos atípicos seleccionados y sus modas.
+                Contiene los siguientes elementos:
+                    - "Nombre columna": Nombre de la columna analizada.
+                    - "Métodos y datos atípicos": Un diccionario que contiene los nombres de los métodos (Z-Score, Rango Intercuartílico, Desviación Estándar y Tukey)
+                      como claves y las listas de valores atípicos detectados por cada método como valores.
+                    - "Datos atípicos finales": Una lista que contiene la moda de los valores atípicos detectados por cada método.
+        """
+        
+        # Obtener los valores atípicos con ayuda de las funciones privadas
+        #creadas anteriormente
+        zscore_outliers = self.zscore(columna)
+        iqr_outliers = self.iqr_outliers(columna)
+        std_dev_outliers = self.std_dev_outliers(columna)
+        tukey_outliers = self.tukey_outliers(columna)
+
+
+        # Para calcular la moda de cada método usamos la funcion de la librería 
+        # https://docs.python.org/3/library/statistics.html
+        zscore_mode = statistics.mode(zscore_outliers)
+        iqr_mode = statistics.mode(iqr_outliers) 
+        std_dev_mode = statistics.mode(std_dev_outliers)
+        tukey_mode = statistics.mode(tukey_outliers)
+        
+        # Crear diccionario para los valores atípicos y sus metodos
+        
+        atipicos = {'zscore' : zscore_outliers,
+                    'iqr' : iqr_outliers,
+                    'std_dev' : std_dev_outliers,
+                    'tukey' : tukey_mode}
         
         
-        
-        
-        
-        
-        
-        
+        # Rotornar matriz con la información indicada
+        return {
+            "Nombre columna": columna,
+            "Métodos y datos atípicos": atipicos,
+            "Datos atípicos finales": [zscore_mode, iqr_mode, std_dev_mode, tukey_mode]
+        }
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
         
